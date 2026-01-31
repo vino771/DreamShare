@@ -128,23 +128,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signInWithGoogle = async () => {
-    try {
-      const siteUrl =
-        import.meta.env.VITE_SITE_URL || window.location.origin;
+  try {
+    const siteUrl =
+      import.meta.env.VITE_SITE_URL || window.location.origin;
 
-      const redirectUrl = `${siteUrl}/auth/v1/callback`;
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: siteUrl, 
+      },
+    });
 
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: redirectUrl },
-      });
-
-      if (error) return { error };
-      return { error: null };
-    } catch (error) {
-      return { error: error as Error };
-    }
-  };
+    return { error: error ?? null };
+  } catch (error) {
+    return { error: error as Error };
+  }
+};
 
   const signOut = async () => {
     await supabase.auth.signOut();
